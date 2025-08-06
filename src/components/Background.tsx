@@ -1,6 +1,8 @@
 import { fetchBackgroundfromUnsplash } from '@/lib/api/unsplash';
 import Links from '../components/Links';
 import Weather from '../components/Weather';
+import Time from './Time';
+import QuotesComponent from './Quotes';
 
 export default async function Background(){
   const Background = await fetchBackgroundfromUnsplash();
@@ -16,8 +18,14 @@ export default async function Background(){
       <div className='flex justify-between'>
         <Links></Links>
       <Weather></Weather>
+      
       </div>
+      
     
+      <Time></Time>
+     <QuotesComponent></QuotesComponent>
+    
+      
     </div>
   )
 }

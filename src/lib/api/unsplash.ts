@@ -5,7 +5,7 @@ export async function fetchBackgroundfromUnsplash():Promise<Background>{
     `
     https://api.unsplash.com/photos/random?query=nature&client_id=${process.env.UNSPLASH_KEY}
     `,{
-      next:{revalidate:3600}
+      next:{revalidate:60}
     }
 
   );
