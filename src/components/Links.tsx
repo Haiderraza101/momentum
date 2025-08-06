@@ -19,6 +19,7 @@ export default function Links(){
         size={20}
         onClick={()=>{
           setopenlinks(!openlinks);
+          setopeninput(false);
           
         }}/>
       </div>
