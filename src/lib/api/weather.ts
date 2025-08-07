@@ -1,13 +1,4 @@
-export interface Weather {
-  location: string;
-  condition: string;
-  temperature: number;
-  feelsLike: number;
-  recentRain: number;
-  windSpeed: number;
-  iconUrl?: string;
-}
-
+import { Weather } from "@/types/weather";
 export default async function fetchIslambadWeather(): Promise<Weather> {
   const res = await fetch(
     `https://api.open-meteo.com/v1/forecast?latitude=33.6844&longitude=73.0479&current_weather=true`,

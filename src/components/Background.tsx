@@ -3,7 +3,7 @@ import Links from '../components/Links';
 import Weather from '../components/Weather';
 import Time from './Time';
 import QuotesComponent from './Quotes';
-
+import Menu from './Menu';
 export default async function Background(){
   const Background = await fetchBackgroundfromUnsplash();
 
@@ -15,16 +15,19 @@ export default async function Background(){
       backgroundPosition:"center",
       height:"100vh"
     }}>
-      <div className='flex justify-between'>
-        <Links></Links>
-      <Weather></Weather>
-      
-      </div>
-      
-    
+     <div className="flex justify-between items-start px-4 pt-4">
+  <Links />
+  <div className="flex gap-2">
+    <Menu />
+    <Weather />
+  </div>
+</div>
+    <div className='relative top-50 text-center'>
+
       <Time></Time>
+     
      <QuotesComponent></QuotesComponent>
-    
+    </div>
       
     </div>
   )

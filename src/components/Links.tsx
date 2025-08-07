@@ -13,7 +13,7 @@ export default function Links(){
   const [title,settitle]=useState<string>("");
   return (
     <div>
-      <div className="flex flex-col gap-1 p-7 justify-center cursor-pointer"> 
+      <div className="flex flex-col gap-1 p-7 justify-center cursor-pointer "> 
          <div className="hover:bg-transparent w-4 ml-1 ">
         <FiExternalLink
         size={20}
@@ -35,7 +35,7 @@ export default function Links(){
     <div className="flex justify-between bg-black p-5 opacity-80 rounded-xl w-80 relative">
       <div className="flex gap-2">
         <FiExternalLink size={20} />
-        <h2>Links</h2>
+        <h2 >Links</h2>
       </div>
       <div className="flex gap-2">
         <IoIosAdd
@@ -58,8 +58,8 @@ export default function Links(){
     exit={{ opacity: 0, y: 0 }}
     transition={{ duration: 0.3 }}
   >
-    <div className="flex flex-col justify-between bg-black p-5 opacity-80 rounded-xl w-70 absolute top-20">
-      <div className="flex justify-between w-full">
+    <div className="flex flex-col justify-between bg-black p-5 opacity-80 rounded-xl w-70 absolute top-20 z-50">
+      <div className="flex justify-between w-full ">
         <GrFormPreviousLink
           size={25}
           onClick={() => {
