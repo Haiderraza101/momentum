@@ -30,12 +30,12 @@ export default function QuotesComponent() {
   };
 
   const markFavorite = () => {
-    // Replace this with your actual logic
+   
     alert("Quote marked as favorite!");
   };
 
   const viewHistory = () => {
-    // Replace this with your actual logic or routing
+   
     alert("Navigating to quote history...");
   };
 
@@ -68,7 +68,7 @@ export default function QuotesComponent() {
       )}
 
       {menuOpen && (
-        <div className="absolute top-[80%] left-1/2 -translate-x-1/2 w-[70vw] sm:w-64 bg-black bg-opacity-80 backdrop-blur-md text-white rounded-xl shadow-lg p-4 space-y-3 border border-white/20 z-40">
+         <div className="absolute bottom-[60%] left-1/2 -translate-x-1/2 w-[70vw] sm:w-64 bg-black bg-opacity-80 backdrop-blur-md text-white rounded-xl shadow-lg p-4 space-y-3 border border-white/20 z-60">
           <ul>
             <QuoteMenuItem icon={<FaRegCopy size={18} />} label="Copy quote" onClick={copyQuote} />
             <QuoteMenuItem icon={<FaHeart size={18} />} label="Mark as favorite" onClick={markFavorite} />
