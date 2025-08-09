@@ -1,5 +1,5 @@
 export interface accountdetails{
-  userame:string,
+  username:string,
   email:string,
   expiry:number
 }

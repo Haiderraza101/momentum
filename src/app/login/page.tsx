@@ -53,7 +53,6 @@ export default function LoginPage() {
 
       const data = await res.json();
       console.log("Login success:", data);
-
       localStorage.setItem("token", data.token);
 
       window.location.href = "/";

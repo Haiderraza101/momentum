@@ -5,9 +5,26 @@ import { CiHeart } from "react-icons/ci";
 import { FaHistory } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
 import { MdOutlineHistoryToggleOff } from "react-icons/md";
+import { CiLogout } from "react-icons/ci";
+import { useRouter } from "next/navigation";
 
 export default function Menu() {
+    const router = useRouter();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
+
+const handlelogout = async () => {
+  try {
+    const res = await fetch('/api/auth/logout', { method: 'POST' });
+    if (!res.ok) {
+      console.error("Logout API failed:", await res.text());
+      return;
+    }
+    localStorage.removeItem('token');
+    router.push('/login');
+  } catch (error) {
+    console.error("Logout failed", error);
+  }
+};
 
   return (
     <div className="relative">
@@ -27,6 +44,10 @@ export default function Menu() {
             <MenuItem icon={<FaHistory size={18} />} label="View favorite history" />
             <MenuItem icon={<FiDownload size={18} />} label="Download background" />
             <MenuItem icon={<MdOutlineHistoryToggleOff size={20} />} label="Background history" />
+            <div onClick={handlelogout}>
+            <MenuItem icon=
+            {<CiLogout size={20} />} label="Logout" />
+            </div>
           </ul>
         </div>
       )}

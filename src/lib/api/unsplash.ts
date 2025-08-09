@@ -1,14 +1,12 @@
 import { Background } from "@/types/background";
 
 export async function fetchBackgroundfromUnsplash():Promise<Background>{
-   const res = await fetch (
-    `
-    https://api.unsplash.com/photos/random?query=nature&client_id=${process.env.UNSPLASH_KEY}
-    `,{
-      next:{revalidate:60}
-    }
-
-  );
+const res = await fetch(
+  `https://api.unsplash.com/photos/random?query=nature&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_KEY}`,
+  {
+    next: { revalidate: 60 }
+  }
+);
 
   if (!res.ok){
     throw new Error('Failed to fetch Background');

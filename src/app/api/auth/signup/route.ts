@@ -1,19 +1,18 @@
 import { UserSignUp } from "@/types/users";
 import { User } from "@/models/users";
-import { response } from "@/utils/response";
+import { NextResponse } from "next/server";
 
-export async function POST(request:Request):Promise<Response>{
+export async function POST(request: Request): Promise<NextResponse> {
+  try {
+    const body: UserSignUp = await request.json();
+    console.log("Incoming body :", body);
+    const result = await User.SignUp(body);
 
-  try{
-   const body:UserSignUp= await request.json();
-  console.log('Incoming body :',body);
-  const result = await User.SignUp(body);
-
-  return response(result,200);
+    return NextResponse.json(result, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message || "Sign Up failed" },
+      { status: 400 }
+    );
   }
-
-  catch(error:any){
-      return response({error:error.message||"Sign Up failed"},400);
-  }
-  
 }
