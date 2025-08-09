@@ -2,22 +2,72 @@
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { UserSignUp } from "@/types/users";
+import {  UserSignUpFormData } from "@/types/users";
 import Link from "next/link";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const [formdata, setformdata] = useState<UserSignUp>({
+  const [formdata, setformdata] = useState<UserSignUpFormData>({
     username: "",
     email: "",
     passwordhash: "",
     confirmpassword: ""
   });
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, seterror] = useState<boolean>(false);
-
+  const [error, seterror] = useState<string>('');
+  const [successmessage,setsuccessmessage]= useState<string>('');
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    seterror('');
+    setsuccessmessage('');
+
+    if (formdata.passwordhash!=formdata.confirmpassword){
+      seterror('Password do not match');
+      setLoading(false);
+      return ;
+    }
+   console.log(formdata);
+    try{
+      const res = await fetch (`/api/auth/signup`,{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          username:formdata.username,
+          email:formdata.email,
+          passwordhash:formdata.passwordhash,
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok){
+        throw new Error(data.error||"Failed to SignUp");
+      }
+
+      localStorage.setItem('token',data.token);
+      setsuccessmessage('Registration Successfull ');
+      formdata.username="";
+      formdata.email="";
+      formdata.passwordhash="";
+      formdata.confirmpassword="";
+    }
+    catch (err) {
+      console.error("Login error:", err);
+      if (err instanceof Error) {
+        const errorMessage = err.message.includes("Credential") 
+          ? "Invalid email or password" 
+          : err.message;
+        seterror(errorMessage);
+      } else {
+        seterror("Something went wrong during login");
+      }
+    } finally {
+      setLoading(false);
+    }
+
   };
 
   return (
@@ -50,6 +100,12 @@ export default function SignUpPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+           {successmessage && (
+            <div className="p-2 bg-green-900/50 border border-green-700 text-green-100 rounded-md text-xs">
+              {successmessage}
+            </div>
+          )}
+
           {error && (
             <div className="p-2 bg-red-900/50 border border-red-700 text-red-100 rounded-md text-xs">
               {error}

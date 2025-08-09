@@ -12,7 +12,13 @@ export const validators = {
     .regex(/(?=.*[a-z])/, "Password must contain at least one lowercase letter")
     .regex(/(?=.*[A-Z])/, "Password must contain at least one uppercase letter")
     .regex(/(?=.*[0-9])/, "Password must contain at least one number")
-    .regex(/(?=.*[^a-zA-Z0-9\s])/, "Password must contain at least one special character")
+    .regex(/(?=.*[^a-zA-Z0-9\s])/, "Password must contain at least one special character"),
+
+    username:z.string()
+    .min(3,"Username must be atleast 3 characters")
+    .max(255,"Username must be atmost 255 characters long")
+    .regex(/^[a-zA-Z0-9_]+$/, "Username  can only contain letters numbers and underscores ")
+    .transform((value)=> value.toLowerCase())
 };
 
 export function validate<T extends object, U extends { [k in keyof T]: ZodTypeAny }>(

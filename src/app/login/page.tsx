@@ -4,7 +4,7 @@ import { UserLogin } from "@/types/users";
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getaccountdetails } from "@/middleware/clientauth.middleware";
+import { getaccountdetails } from "@/middleware/userauth";
 import Image from "next/image";
 
 
@@ -55,14 +55,11 @@ export default function LoginPage() {
       console.log("Login success:", data);
 
       localStorage.setItem("token", data.token);
-      localStorage.setItem("refreshtoken", data.refreshtoken);
 
-      // Redirect to home page
       window.location.href = "/";
     } catch (err) {
       console.error("Login error:", err);
       if (err instanceof Error) {
-        // Handle specific error messages more gracefully
         const errorMessage = err.message.includes("Credential") 
           ? "Invalid email or password" 
           : err.message;

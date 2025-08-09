@@ -10,11 +10,20 @@ export interface UserLogin{
   passwordhash:string
 }
 
-export interface UserSignUp{
+export interface UserSignUpFormData{
   username:string,
   email:string,
   passwordhash:string,
   confirmpassword:string,
+} 
+export interface UserSignUp{
+  username:string,
+  email:string,
+  passwordhash:string,
+}
+
+export interface UserSignUpwithId extends UserSignUp{
+  id:number;
 }
 export interface Userwithtoken{
  user:User,
