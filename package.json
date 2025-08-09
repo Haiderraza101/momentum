@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "test-password": "ts-node src/scripts/test-password.ts",
     "lint": "next lint"
   },
   "dependencies": {

@@ -42,18 +42,30 @@ export class User{
 
   const user = users[0];
 
-  // Handle password comparison carefully
   let passwordMatch = false;
   try {
-    // Ensure we're comparing strings, not Buffers
+   
     const storedHash = typeof user.passwordhash === 'string' 
       ? user.passwordhash 
       : user.passwordhash.toString('utf-8');
     
-    // Trim whitespace from input password
     const inputPassword = passwordhash.trim();
     
     passwordMatch = await bcrypt.compare(inputPassword, storedHash);
+
+     const password = 'Test@1234';
+const saltRounds = 10;
+
+async function hashPassword() {
+  try {
+    const hash = await bcrypt.hash(password, saltRounds);
+    console.log('Hashed password:', hash);
+  } catch (err) {
+    console.error('Error hashing password:', err);
+  }
+}
+
+hashPassword(); 
     console.log(`Comparing "${inputPassword}" with hash:`, storedHash);
     console.log("Password match result:", passwordMatch);
   } catch (err) {
