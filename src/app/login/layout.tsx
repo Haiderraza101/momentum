@@ -1,10 +1,5 @@
-import { ReactNode } from "react"
-
-
-interface Props {
-  children:ReactNode;
-}
-export default function LoginLayout({children}:Props){
+import { LayoutProps } from "@/types/layoutprop"
+export default function LoginLayout({children}:LayoutProps){
   return (
     <div>
     {children}

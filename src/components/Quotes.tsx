@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchQuotes } from "../lib/api/Quotes";
+import { fetchQuotes } from '../lib/api/quotes';
 import { Quotes } from "@/types/quotes";
 import { BsThreeDots } from "react-icons/bs";
 import { FaHeart, FaHistory, FaRegCopy } from "react-icons/fa";

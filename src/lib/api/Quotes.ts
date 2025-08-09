@@ -1,6 +1,6 @@
 import { Quotes } from "@/types/quotes";
 export async function fetchQuotes(): Promise<Quotes> {
-  const res = await fetch('http://localhost:3000/api/quotes');
+  const res = await fetch('/api/quotes');
 
   if (!res.ok) {
     throw new Error("Error in fetching the Quotes");

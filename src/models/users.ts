@@ -6,15 +6,12 @@ import { UserwithPassword } from "@/types/users";
 import bcrypt from 'bcrypt';
 import { createSession } from "@/utils/session";
 import { encrypt} from "@/utils/jwt";
-import { refreshexpirationtime } from "@/utils/jwt";
-
 
 export class User{
   
   public static async Login(loginData: UserLogin): Promise<Userwithtoken> {
   console.log("Login payload", loginData);
   
- 
   const [successorfailure, credentialsorerrors] = validate(loginData, {
     email: validators.email,
     passwordhash: validators.passwordhash
@@ -24,6 +21,7 @@ export class User{
     const error = credentialsorerrors.issues[0];
     throw new Error(`Error in validation: ${error.message}`);
   }
+
 
   const { email, passwordhash } = credentialsorerrors;
 
@@ -53,19 +51,8 @@ export class User{
     
     passwordMatch = await bcrypt.compare(inputPassword, storedHash);
 
-     const password = 'Test@1234';
-const saltRounds = 10;
+     
 
-async function hashPassword() {
-  try {
-    const hash = await bcrypt.hash(password, saltRounds);
-    console.log('Hashed password:', hash);
-  } catch (err) {
-    console.error('Error hashing password:', err);
-  }
-}
-
-hashPassword(); 
     console.log(`Comparing "${inputPassword}" with hash:`, storedHash);
     console.log("Password match result:", passwordMatch);
   } catch (err) {
@@ -80,16 +67,10 @@ hashPassword();
   const { passwordhash: _, ...userwithoutPassword } = user;
 
   const token = await createSession(user.id, user.username, user.email);
-  const refreshtoken = await encrypt(
-    { userid: user.id, username: user.username, email: user.email, refresh: true },
-    refreshexpirationtime
-  );
 
   return {
     user: userwithoutPassword,
     token,
-    refreshtoken
   };
 }
-  
 }

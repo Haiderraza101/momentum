@@ -2,7 +2,7 @@ import { JWTPayload } from "jose";
 import { dcrypt, encrypt } from "./jwt";
 import { SessionPayload } from "@/types/session";
 
-export async function createSession(userid: number, username: string, email: string, expiry: string) {
+export async function createSession(userid: number, username: string, email: string, expiry?: string) {
   return await encrypt({ userid, username, email }, expiry);
 }
 
@@ -40,7 +40,7 @@ export async function getSession(request: Request): Promise<SessionPayload> {
 
   } catch (error) {
     if (error instanceof Response) {
-      throw error; // already has status and message
+      throw error; 
     }
 
     const message = error instanceof Error ? error.message : 'Invalid session';

@@ -1,19 +1,16 @@
 'use client'
 
+import { UserLogin } from "@/types/users";
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getaccountdetails } from "@/middleware/clientauth.middleware";
 import Image from "next/image";
 
-interface FormData {
-  email: string;
-  passwordhash: string;
-}
 
 export default function LoginPage() {
   const router = useRouter();
-  const [formdata, setformdata] = useState<FormData>({
+  const [formdata, setformdata] = useState<UserLogin>({
     email: "",
     passwordhash: "",
   });
@@ -26,7 +23,6 @@ export default function LoginPage() {
     setError("");
 
     try {
-      // Trim whitespace from inputs before sending
       const loginData = {
         email: formdata.email.trim(),
         passwordhash: formdata.passwordhash.trim()
@@ -43,7 +39,7 @@ export default function LoginPage() {
       });
 
       if (!res.ok) {
-        // Try to get JSON error first, fall back to text
+
         let errorText;
         try {
           const errorData = await res.json();
@@ -58,7 +54,6 @@ export default function LoginPage() {
       const data = await res.json();
       console.log("Login success:", data);
 
-      // Store tokens securely
       localStorage.setItem("token", data.token);
       localStorage.setItem("refreshtoken", data.refreshtoken);
 

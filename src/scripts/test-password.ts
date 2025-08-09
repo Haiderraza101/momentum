@@ -8,11 +8,11 @@ async function testPassword() {
     console.log('Testing password:', password);
     console.log('Stored hash:', storedHash);
     
-    // Test direct comparison
+ 
     const match = await bcrypt.compare(password, storedHash);
     console.log('Direct comparison result:', match);
     
-    // Test re-hashing and comparison
+   
     const saltRounds = 10;
     const newHash = await bcrypt.hash(password, saltRounds);
     console.log('Newly generated hash:', newHash);

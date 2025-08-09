@@ -1,4 +1,4 @@
-import { validators } from "@/utils/validator"
+
 export interface User{
   id:number,
   username:string,
@@ -10,10 +10,15 @@ export interface UserLogin{
   passwordhash:string
 }
 
+export interface UserSignUp{
+  username:string,
+  email:string,
+  passwordhash:string,
+  confirmpassword:string,
+}
 export interface Userwithtoken{
  user:User,
  token:string,
- refreshtoken:string
 }
 
 export interface UserwithPassword extends User{

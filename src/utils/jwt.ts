@@ -3,7 +3,6 @@ import { JWTPayload,SignJWT,jwtVerify } from 'jose';
 
 const secretkey = process.env.JWT_SECRET||"e8fcd86f2d7c41449a9f23f5c69e84a4e03b673c139c47b59883fa2e2c6a7f98";
 const expirationtime = process.env.JWT_EXPIRATION||'1d';
-export const refreshexpirationtime = process.env.REFRESH_TOKEN_EXPIRATION || '1m';
 
 
 if (!secretkey){

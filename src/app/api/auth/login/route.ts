@@ -1,13 +1,11 @@
-import { User } from "@/models/users.model";
+import { User } from "@/models/users";
 import { UserLogin } from "@/types/users";
 import { response } from "@/utils/response";
 
 export async function POST(request: Request): Promise<Response> {
   try {
-    const body = await request.json() as UserLogin;
-
-    // 🔍 Debug log — see exactly what frontend sent
-    console.log("📥 Incoming login body:", body);
+    const body:UserLogin = await request.json();
+    console.log("Incoming login body:", body);
 
     const result = await User.Login(body);
     return response(result, 200);
