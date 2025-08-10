@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { CiHeart } from "react-icons/ci";
+import { FaHeart, } from "react-icons/fa";
 import { FaHistory } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
 import { MdOutlineHistoryToggleOff } from "react-icons/md";
@@ -59,7 +59,7 @@ const submitfavoritebackground = async () => {
       return;
     }
 
-    setsuccessmessage('Background added to favorites ');
+    setsuccessmessage('Background added to Favorites ');
   } catch (error) {
     console.error('Favorite Background Error', error);
   }
@@ -85,7 +85,7 @@ const submitfavoritebackground = async () => {
           <ul>
             <div onClick={submitfavoritebackground}>
 <MenuItem
-  icon={<CiHeart size={20} className="hover:text-rose-500" />}
+  icon={<FaHeart size={20} className="hover:text-rose-500" />}
   label={
     successmessage
       ? <span className="text-green-500">{successmessage}</span>

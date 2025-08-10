@@ -5,11 +5,14 @@ import { fetchQuotes } from '../lib/api/quotes';
 import { Quotes } from "@/types/quotes";
 import { BsThreeDots } from "react-icons/bs";
 import { FaHeart, FaHistory, FaRegCopy } from "react-icons/fa";
+import { JWTPayload } from "@/types/users";
+import { jwtDecode } from "jwt-decode";
 
 export default function QuotesComponent() {
   const [hovered, setHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [quotes, setQuotes] = useState<Quotes>({ quote: "", author: "" });
+  const [successmessage,setsuccessmessage]=useState<string>('');
 
   useEffect(() => {
     async function getQuote() {
@@ -29,15 +32,43 @@ export default function QuotesComponent() {
     }
   };
 
-  const markFavorite = () => {
+  const submitFavoriteQuote = async () => {
+   try{
+    const token=localStorage.getItem('token');
+    if (!token){
+      console.error('No Token Found');
+      return;
+    }
+    const decoded : JWTPayload = jwtDecode(token);
+    const userid = decoded.userid;
+
+    const res = await fetch (`/api/favoritequotes`,{
+      method:"POST",
+      headers:{
+        'Content-Type':'application/json',
+         'Authorization':`Bearer ${token}`
+      },
+      body:JSON.stringify({
+        userid:userid,
+        quotes:quotes.quote,
+        author:quotes.author
+      })
+    });
+
+    if (!res.ok){
+      console.error('Favorite Quote Api failed');
+      return ;
+    }
+
+    setsuccessmessage('Quote added to Favorites')
+    
+   }
+   catch(error){
+    console.error('Favorite Quote Error',error);
+   }
    
-    alert("Quote marked as favorite!");
   };
 
-  const viewHistory = () => {
-   
-    alert("Navigating to quote history...");
-  };
 
   return (
     <div
@@ -62,7 +93,10 @@ export default function QuotesComponent() {
           <BsThreeDots
             size={20}
             className="cursor-pointer"
-            onClick={() => setMenuOpen(!menuOpen)}
+            onClick={() => {
+              setMenuOpen(!menuOpen);
+              setsuccessmessage('');
+            }}
           />
         </div>
       )}
@@ -70,9 +104,16 @@ export default function QuotesComponent() {
       {menuOpen && (
          <div className="absolute bottom-[60%] left-1/2 -translate-x-1/2 w-[70vw] sm:w-64 bg-black bg-opacity-80 backdrop-blur-md text-white rounded-xl shadow-lg p-4 space-y-3 border border-white/20 z-60">
           <ul>
-            <QuoteMenuItem icon={<FaRegCopy size={18} />} label="Copy quote" onClick={copyQuote} />
-            <QuoteMenuItem icon={<FaHeart size={18} />} label="Mark as favorite" onClick={markFavorite} />
-            <QuoteMenuItem icon={<FaHistory size={18} />} label="View history" onClick={viewHistory} />
+            <div
+            onClick={copyQuote}>
+            <QuoteMenuItem icon={<FaRegCopy size={18} />} label="Copy quote" />
+            </div>
+            <div onClick={submitFavoriteQuote}>
+            <QuoteMenuItem icon={<FaHeart size={18} className="hover:text-rose-500"/>} label = {
+              successmessage ? <span className="text-green-500">{successmessage}</span>:"Mark as favorite"
+            } />
+            </div>
+            <QuoteMenuItem icon={<FaHistory size={18} />} label="View history" />
           </ul>
         </div>
       )}
@@ -83,15 +124,13 @@ export default function QuotesComponent() {
 function QuoteMenuItem({
   icon,
   label,
-  onClick,
 }: {
   icon: React.ReactNode;
-  label: string;
-  onClick: () => void;
+  label: React.ReactNode;
 }) {
   return (
     <li
-      onClick={onClick}
+
       className="flex items-center gap-3 cursor-pointer hover:bg-white/20 transition rounded-lg px-3 py-2"
     >
       {icon}

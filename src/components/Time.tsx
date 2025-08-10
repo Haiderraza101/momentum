@@ -2,23 +2,27 @@
 import React, { useState, useEffect } from "react";
 import { JWTPayloadwithUserName } from "@/types/users";
 import { jwtDecode } from "jwt-decode";
+
 export default function Time() {
   const [currenttime, setCurrentTime] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [goal, setGoal] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
 
-  const token = localStorage.getItem('token');
-  if (!token){
-    console.error('No token Found');
-    return;
-  }
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No token Found');
+      return;
+    }
 
-  const decoded : JWTPayloadwithUserName = jwtDecode(token);
+    const decoded: JWTPayloadwithUserName = jwtDecode(token);
+    const rawUsername = decoded.username || "";
+    const firstName = rawUsername.split(" ")[0];
+    setUsername(firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase());
+  }, []);
 
-  const rawUsername = decoded.username || "";
-  const firstName = rawUsername.split(" ")[0];
-  const username = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
-
+  
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -47,22 +51,21 @@ export default function Time() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center text-white  text-center px-4">
+    <div className="flex flex-col items-center justify-center text-white text-center px-4">
       <div className="text-5xl sm:text-6xl md:text-8xl font-bold">{currenttime}</div>
       <div className="text-2xl sm:text-3xl md:text-4xl font-medium mt-2">{message}</div>
 
       <div className="text-xl sm:text-2xl md:text-3xl font-light mt-6">
-        {username}, {" "}What is your main goal for today?
+        {username && `${username}, What is your main goal for today?`}
       </div>
 
-     
       <input
-  type="text"
-  value={goal} 
-  onChange={(e) => setGoal(e.target.value)} 
-  placeholder="Enter your goal..."
-  className="mt-4 w-full max-w-xl text-lg sm:text-xl border-b-2 border-white bg-transparent text-white font-bold text-center focus:outline-none placeholder-white/60 z-49 truncate overflow-hidden whitespace-nowrap"
-/>
+        type="text"
+        value={goal}
+        onChange={(e) => setGoal(e.target.value)}
+        placeholder="Enter your goal..."
+        className="mt-4 w-full max-w-xl text-lg sm:text-xl border-b-2 border-white bg-transparent text-white font-bold text-center focus:outline-none placeholder-white/60 truncate overflow-hidden whitespace-nowrap"
+      />
     </div>
   );
 }

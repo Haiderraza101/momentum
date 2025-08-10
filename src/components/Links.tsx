@@ -32,7 +32,7 @@ export default function Links(){
     exit={{ opacity: 0, scale: 0.95 }}
     transition={{ duration: 0.3 }}
   >
-    <div className="flex justify-between bg-black p-5 opacity-80 rounded-xl w-80 relative">
+    <div className="flex justify-between bg-black p-5 opacity-80 rounded-xl w-80 absolute">
       <div className="flex gap-2">
         <FiExternalLink size={20} />
         <h2 >Links</h2>
