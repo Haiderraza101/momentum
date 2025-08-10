@@ -33,3 +33,11 @@ export interface Userwithtoken{
 export interface UserwithPassword extends User{
   passwordhash:Buffer;
 }
+
+export interface JWTPayload {
+  userid:number;
+}
+
+export interface JWTPayloadwithUserName extends JWTPayload{
+  username:string;
+}

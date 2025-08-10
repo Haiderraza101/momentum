@@ -28,7 +28,7 @@ export class User{
   }
 
   const {email,passwordhash,username}=credentialsorerrors;
-
+ 
   const saltrounds:number =10;
   const passwordhashing = await bcrypt.hash(passwordhash,saltrounds);
 

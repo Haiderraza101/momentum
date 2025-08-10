@@ -18,7 +18,7 @@ export default async function Background(){
      <div className="flex justify-between items-start px-4 pt-4">
   <Links />
   <div className="flex gap-2">
-    <Menu />
+    <Menu backgroundurl={Background.url}/>
     <Weather />
   </div>
 </div>

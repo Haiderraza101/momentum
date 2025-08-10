@@ -1,10 +1,23 @@
 'use client';
 import React, { useState, useEffect } from "react";
-
+import { JWTPayloadwithUserName } from "@/types/users";
+import { jwtDecode } from "jwt-decode";
 export default function Time() {
   const [currenttime, setCurrentTime] = useState<string>("");
   const [message, setMessage] = useState<string>("");
-  const [goal, setGoal] = useState<string>(""); // ✅ input state added
+  const [goal, setGoal] = useState<string>("");
+
+  const token = localStorage.getItem('token');
+  if (!token){
+    console.error('No token Found');
+    return;
+  }
+
+  const decoded : JWTPayloadwithUserName = jwtDecode(token);
+
+  const rawUsername = decoded.username || "";
+  const firstName = rawUsername.split(" ")[0];
+  const username = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
 
   useEffect(() => {
     const updateTime = () => {
@@ -39,7 +52,7 @@ export default function Time() {
       <div className="text-2xl sm:text-3xl md:text-4xl font-medium mt-2">{message}</div>
 
       <div className="text-xl sm:text-2xl md:text-3xl font-light mt-6">
-        What is your main goal for today?
+        {username}, {" "}What is your main goal for today?
       </div>
 
      

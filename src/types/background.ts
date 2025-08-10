@@ -5,3 +5,12 @@ export interface Background{
   authorName:string;
   authorLink:string;
 }
+
+export interface MenuProp{
+  backgroundurl:string
+}
+
+export interface UserFavoriteBackground extends MenuProp{
+userid:number;
+}
+

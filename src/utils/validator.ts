@@ -18,7 +18,8 @@ export const validators = {
     .min(3,"Username must be atleast 3 characters")
     .max(255,"Username must be atmost 255 characters long")
     .regex(/^[a-zA-Z0-9_]+$/, "Username  can only contain letters numbers and underscores ")
-    .transform((value)=> value.toLowerCase())
+    .transform((value)=> value.toLowerCase()),
+    id:z.number().int('Id must be Integer ').positive('Id must be positive'),
 };
 
 export function validate<T extends object, U extends { [k in keyof T]: ZodTypeAny }>(
