@@ -5,5 +5,5 @@ export interface Quotes{
 export interface UserFavoriteQuotes{
     userid:number;
     quotes:string,
-    auhor:string
+    author:string
 }

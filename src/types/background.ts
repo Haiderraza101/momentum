@@ -1,13 +1,14 @@
 export interface Background{
-  id:string;
+  id:number;
   url:string;
-  description?:string;
+  description:string;
   authorName:string;
   authorLink:string;
 }
 
 export interface MenuProp{
   backgroundurl:string
+  backgrounddescription:string;
 }
 
 export interface UserFavoriteBackground extends MenuProp{

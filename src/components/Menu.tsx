@@ -10,12 +10,15 @@ import { useRouter } from "next/navigation";
 import { MenuProp } from "@/types/background";
 import {jwtDecode} from "jwt-decode";
 import { JWTPayload } from "@/types/users";
-import Popup from "./Popup";
-export default function Menu({backgroundurl}:MenuProp) {
+import FavoriteBackground from "./FavoriteBackgrounds";
+export default function Menu({backgroundurl,backgrounddescription}:MenuProp) {
+  console.log(backgrounddescription)
 
     const router = useRouter();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [successmessage,setsuccessmessage]=useState<string>('');
+  const [favoritebackground,setfavoritebackground]=useState<boolean>(false);
+
 
 const handlelogout = async () => {
   try {
@@ -50,7 +53,8 @@ const submitfavoritebackground = async () => {
       },
       body: JSON.stringify({
         userid: userid,
-        backgroundurl: backgroundurl
+        backgroundurl: backgroundurl,
+        backgrounddescription:backgrounddescription
       })
     });
 
@@ -93,7 +97,12 @@ const submitfavoritebackground = async () => {
   }
 />
             </div>
+            <div onClick={()=>{
+              setfavoritebackground(true);
+              setMenuOpen(!menuOpen);
+            }}>
             <MenuItem icon={<FaHistory size={18} />} label="View favorite history" />
+            </div>
             <MenuItem icon={<FiDownload size={18} />} label="Download background" />
             <MenuItem icon={<MdOutlineHistoryToggleOff size={20} />} label="Background history" />
             <div onClick={handlelogout}>
@@ -103,6 +112,11 @@ const submitfavoritebackground = async () => {
           </ul>
         </div>
       )}
+      {
+        favoritebackground && (
+          <FavoriteBackground></FavoriteBackground>
+        )
+      }
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { validate, validators } from "@/utils/validator";
 import db from '../../lib/db';
 export class Background {
   public static async FavoriteBackground(FavoriteBackground: UserFavoriteBackground) {
-    const { userid, backgroundurl } = FavoriteBackground;
+    const { userid, backgroundurl,backgrounddescription } = FavoriteBackground;
 
     const [success, validated] = validate({ userid }, { userid: validators.id });
 
@@ -13,12 +13,13 @@ export class Background {
     }
 
     const insertBackgroundQuery = `
-      INSERT INTO backgrounds (imageurl)
-      VALUES ($1)
-      ON CONFLICT (imageurl) DO UPDATE SET imageurl = EXCLUDED.imageurl
-      RETURNING id
-    `;
-    const backgroundResult = await db.query(insertBackgroundQuery, [backgroundurl]);
+  INSERT INTO backgrounds (imageurl, description)
+  VALUES ($1, $2)
+  ON CONFLICT (imageurl)
+  DO UPDATE SET description = EXCLUDED.description
+  RETURNING id
+`;
+    const backgroundResult = await db.query(insertBackgroundQuery, [backgroundurl,backgrounddescription]);
     const backgroundid = backgroundResult.rows[0].id;
 
     const insertFavoriteQuery = `
@@ -31,5 +32,31 @@ export class Background {
       console.log('Favorite background inserted successfully');
 return { success: true };
   }
+
+
+public static async getFavoriteBackground(userid: number) {
+  const [success, validated] = validate(
+    { userid },
+    { userid: validators.id }
+  );
+
+  if (!success) {
+    const error = validated.issues[0];
+    throw new Error(`Error in validation ${error.message}`);
+  }
+
+  const query = `
+    SELECT b.imageurl, b.description
+    FROM backgrounds b
+    JOIN favoritebackgrounds fb ON b.id = fb.backgroundid
+    WHERE fb.userid = $1
+  `;
+
+  const result = await db.query(query, [userid]);
+  console.log(result.rows);
+  return result.rows;
+
+
+}
 
 }

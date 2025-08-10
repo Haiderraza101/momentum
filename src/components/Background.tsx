@@ -7,6 +7,8 @@ import Menu from './Menu';
 export default async function Background(){
   const Background = await fetchBackgroundfromUnsplash();
 
+
+
   return (
     <div
     style={{
@@ -18,7 +20,8 @@ export default async function Background(){
      <div className="flex justify-between items-start px-4 pt-4">
   <Links />
   <div className="flex gap-2">
-    <Menu backgroundurl={Background.url}/>
+    <Menu backgroundurl={Background.url}
+    backgrounddescription={Background.description}/>
     <Weather />
   </div>
 </div>

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { UserFavoriteBackground } from "@/types/background";
+import { MenuProp, UserFavoriteBackground } from "@/types/background";
 import { Background } from "@/models/background";
 
 
@@ -22,3 +22,30 @@ export async function POST(request:Request):Promise<NextResponse>{
     })
   }
 }
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const idParam = searchParams.get("backgroundid");
+
+  if (!idParam) {
+    return NextResponse.json(
+      { error: "backgroundid is required" },
+      { status: 400 }
+    );
+  }
+
+  const id = Number(idParam);
+  if (isNaN(id)) {
+    return NextResponse.json(
+      { error: "backgroundid must be a valid number" },
+      { status: 400 }
+    );
+  }
+
+  console.log("------------------Background id ", id);
+  const result:MenuProp[] = await Background.getFavoriteBackground(id);
+  console.log(result);
+
+  return NextResponse.json(result);
+}
+
