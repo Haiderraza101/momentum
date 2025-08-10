@@ -1,4 +1,4 @@
-import { UserFavoriteBackground } from "@/types/background";
+import { backgroundItem, UserFavoriteBackground } from "@/types/background";
 import { validate, validators } from "@/utils/validator";
 import db from '../../lib/db';
 export class Background {
@@ -34,7 +34,7 @@ return { success: true };
   }
 
 
-public static async getFavoriteBackground(userid: number) {
+public static async getFavoriteBackground(userid: number): Promise<backgroundItem[]> {
   const [success, validated] = validate(
     { userid },
     { userid: validators.id }
@@ -53,10 +53,7 @@ public static async getFavoriteBackground(userid: number) {
   `;
 
   const result = await db.query(query, [userid]);
-  console.log(result.rows);
-  return result.rows;
-
-
+  return result.rows; 
 }
 
 }

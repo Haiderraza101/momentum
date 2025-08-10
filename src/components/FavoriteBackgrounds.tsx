@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { JWTPayload } from "@/types/users";
+import Link from "next/link";
+import { backgroundItem } from "@/types/background";
 
 export default function FavoriteBackground() {
-  const [favoritebackground, setfavoritebackgrounds] = useState({});
+  const [favoritebackground, setfavoritebackgrounds] = useState<backgroundItem[]>([]);
   const [userid, setUserid] = useState<number>();
 
   useEffect(() => {
@@ -28,9 +30,10 @@ export default function FavoriteBackground() {
       });
 
       if (res.ok) {
-        const data = await res.json();
+        const data:backgroundItem[] = await res.json();
         
         setfavoritebackgrounds(data);
+        console.log(favoritebackground);
       } else {
         console.error("Failed to fetch favorites", await res.text());
       }
@@ -40,9 +43,23 @@ export default function FavoriteBackground() {
   };
 
   return (
-    <div>
-      <div className="absolute top-20 right-0 w-[50vw] sm:w-64 bg-black bg-opacity-80 backdrop-blur-md text-white rounded-xl shadow-lg p-4 space-y-3 border border-white/20 z-40">
-        
+    <div >
+      <div className="absolute top-20 right-0 w-[50vw] sm:w-128 bg-black bg-opacity-80 backdrop-blur-md text-white rounded-xl shadow-lg p-4 space-y-3 border border-white/20 z-40">
+        {
+          favoritebackground.length === 0 ? (
+            <p>No Favorite Background</p>
+          ) : (
+           favoritebackground.map((favorite, index) => (
+  <div key={index} className="flex flex-col gap-1">
+    <span>{favorite.description || "No description"}</span>
+    <Link href={favorite.imageurl} target="_blank" className="text-blue-400 underline">
+      View Image
+    </Link>
+  </div>
+))
+
+          )
+        }
       </div>
     </div>
   );

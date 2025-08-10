@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { MenuProp, UserFavoriteBackground } from "@/types/background";
+import { UserFavoriteBackground } from "@/types/background";
 import { Background } from "@/models/background";
-
+import { backgroundItem } from "@/types/background";
 
 export async function POST(request:Request):Promise<NextResponse>{
 
@@ -43,8 +43,8 @@ export async function GET(request: Request) {
   }
 
   console.log("------------------Background id ", id);
-  const result:MenuProp[] = await Background.getFavoriteBackground(id);
-  console.log(result);
+  const result:backgroundItem[] = await Background.getFavoriteBackground(id);
+  console.log('---------result ',result);
 
   return NextResponse.json(result);
 }

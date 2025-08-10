@@ -15,3 +15,7 @@ export interface UserFavoriteBackground extends MenuProp{
 userid:number;
 }
 
+export interface backgroundItem{
+  imageurl:string;
+  description:string | null;
+}
