@@ -8,7 +8,6 @@ export async function POST (request:Request):Promise<NextResponse>{
   try{
     const body:UserFavoriteQuotes = await request.json();
     const result = Quotes.FavoriteQuotes(body);
-    console.log('Incoming body -----------',body)
     return NextResponse.json(result,{
       status:200
     });

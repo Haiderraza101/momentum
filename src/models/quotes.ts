@@ -5,7 +5,6 @@ import db from '../../lib/db';
 export class Quotes{
   public static async FavoriteQuotes(FavoriteQuote:UserFavoriteQuotes){
     const {userid,quotes,author}=FavoriteQuote;
-     console.log('Favorite Quote Details --------------',userid,quotes,author);
     const [success,validated]=validate({
       userid
     },{

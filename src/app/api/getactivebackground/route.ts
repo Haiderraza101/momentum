@@ -12,8 +12,6 @@ export async function GET(req: Request) {
 
     const result = await Background.getActiveBackground(userid);
 
-    console.log('-----------The Response',result);
-
     return NextResponse.json(result);
   } catch (error: any) {
     return NextResponse.json(

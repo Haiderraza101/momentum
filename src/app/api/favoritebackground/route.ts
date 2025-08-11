@@ -7,9 +7,7 @@ export async function POST(request:Request):Promise<NextResponse>{
 
   try{
     const body : UserFavoriteBackground = await request.json();
-    console.log("Incoming Body : ",body);
     const result = await Background.FavoriteBackground(body);
-    console.log('Route received result:', result);
     return NextResponse.json(result,{
       status:200
     });
@@ -42,9 +40,7 @@ export async function GET(request: Request) {
     );
   }
 
-  console.log("------------------Background id ", id);
   const result:backgroundItem[] = await Background.getFavoriteBackground(id);
-  console.log('---------result ',result);
 
   return NextResponse.json(result);
 }

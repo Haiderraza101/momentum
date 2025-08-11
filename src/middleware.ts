@@ -7,10 +7,8 @@ const publicRoutes = ['/login','/signup'];
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  console.log("Middleware pathname:", pathname);
-  console.log("Cookies:", request.cookies);
+
   const session = request.cookies.get("sessionToken");
-  console.log("Session token cookie:", session);
 
   if (pathname.startsWith('/api/')){
     return NextResponse.next();
