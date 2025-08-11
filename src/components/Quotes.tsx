@@ -1,34 +1,76 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import { fetchQuotes } from '../lib/api/quotes';
-import { Quotes } from "@/types/quotes";
+import { quotedata, quoteitem, Quotes } from "@/types/quotes";
 import { BsThreeDots } from "react-icons/bs";
 import { FaHeart, FaHistory, FaRegCopy } from "react-icons/fa";
 import { JWTPayload } from "@/types/users";
 import { jwtDecode } from "jwt-decode";
 import { IoMdClose } from "react-icons/io";
+import FavoriteQuote from "./FavoriteQuote";
 
 
 export default function QuotesComponent() {
   const [hovered, setHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [quotes, setQuotes] = useState<Quotes>({ quote: "", author: "" });
+
   const [successmessage,setsuccessmessage]=useState<string>('');
   const [copyquote,setcopyquote]=useState<string>('');
+  const [favoritequote,setfavoritequote]=useState<boolean>(false);
+  const [quotedata,setquotedata]=useState<quotedata|null>(null);
 
-  useEffect(() => {
-    async function getQuote() {
-      const data = await fetchQuotes();
-      console.log("Fetched Quote:", data);
-      setQuotes(data);
-    }
-    getQuote();
-  }, []);
+  // useEffect(() => {
+  //   async function getQuote() {
+  //     const data = await fetchQuotes();
+  //     console.log("Fetched Quote:", data);
+  //     setQuotes(data);
+  //   }
+  //   getQuote();
+  // }, []);
+
+  const loadQuotes = useCallback(async () =>{
+     try{
+      let userid :number|null = null;
+      const token = localStorage.getItem('token');
+
+      if (token){
+        const decoded :JWTPayload = jwtDecode(token);
+        userid=decoded.userid;
+      }
+
+      if (userid){
+        const res = await fetch(`/api/getactivequotes?userid=${userid}`,{
+          headers:{
+            'Authorization':`Bearer ${token}`
+          }
+        });
+        const data = await res.json();
+
+        if (data.success&&data.quote){
+          setquotedata({
+            quote:data.quote.text,
+            author:data.quote.author
+          });
+          return;
+        }
+      }
+
+      const randomquote = await fetchQuotes();
+      setquotedata({
+        quote:randomquote.quote,
+        author:randomquote.author
+      });
+     }
+     catch(error){
+      console.error('Error loading Quote',error);
+     }
+  },[]);
+
 
   const copyQuote = async () => {
     try {
-      await navigator.clipboard.writeText(`"${quotes.quote}" - ${quotes.author}`);
+      await navigator.clipboard.writeText(`"${quotedata?.quote}" - ${quotedata?.author}`);
      setcopyquote('Quote Copied to Clipboard')
     } catch (err) {
        setcopyquote('');
@@ -53,8 +95,8 @@ export default function QuotesComponent() {
       },
       body:JSON.stringify({
         userid:userid,
-        quotes:quotes.quote,
-        author:quotes.author
+        quotes:quotedata?.quote,
+        author:quotedata?.author
       })
     });
 
@@ -87,20 +129,21 @@ export default function QuotesComponent() {
           hovered ? "-translate-y-6" : ""
         }`}
       >
-        "{quotes.quote}"
+        "{quotedata?.quote}"
       </div>
 
       {hovered && (
         <div className="absolute top-[60%] left-1/2 -translate-x-1/2 mt-2 text-sm text-white flex items-center gap-2">
-          <span className="text-white">{quotes.author}</span>
+          <span className="text-white">{quotedata?.author}</span>
           <div onClick={() => {
               setMenuOpen(!menuOpen);
               setsuccessmessage('');
               setcopyquote('');
+              setfavoritequote(false);
             }}
             className="cursor-pointer">
           {
-            !menuOpen ? (<BsThreeDots
+            !menuOpen && !favoritequote ? (<BsThreeDots
             size={20}
           />):(
          <IoMdClose size={20}/>
@@ -125,10 +168,24 @@ export default function QuotesComponent() {
               successmessage ? <span className="text-green-500">{successmessage}</span>:"Mark as favorite"
             } />
             </div>
+            <div onClick={()=>{
+              setfavoritequote(true);
+              setMenuOpen(false);
+            }}>
             <QuoteMenuItem icon={<FaHistory size={18} />} label="View favorite history" />
+            </div>
           </ul>
         </div>
       )}
+      {
+        favoritequote && (
+          <FavoriteQuote
+          setfavoritequote={setfavoritequote}
+          refreshQuote={loadQuotes}>
+          
+          </FavoriteQuote>
+        )
+      }
     </div>
   );
 }

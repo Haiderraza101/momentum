@@ -21,13 +21,13 @@ export async function POST(request:Request):Promise<NextResponse>{
   }
 }
 
-export async function GET(request: Request) {
+export async function GET(request: Request):Promise<NextResponse> {
   const { searchParams } = new URL(request.url);
-  const idParam = searchParams.get("backgroundid");
+  const idParam = searchParams.get("userid");
 
   if (!idParam) {
     return NextResponse.json(
-      { error: "backgroundid is required" },
+      { error: "User is required" },
       { status: 400 }
     );
   }
@@ -35,13 +35,15 @@ export async function GET(request: Request) {
   const id = Number(idParam);
   if (isNaN(id)) {
     return NextResponse.json(
-      { error: "backgroundid must be a valid number" },
+      { error: "User must be a valid number" },
       { status: 400 }
     );
   }
 
   const result:backgroundItem[] = await Background.getFavoriteBackground(id);
 
-  return NextResponse.json(result);
+  return NextResponse.json(result,{
+    status:200
+  });
 }
 

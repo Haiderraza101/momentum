@@ -4,10 +4,12 @@ import { jwtDecode } from "jwt-decode";
 import { JWTPayload } from "@/types/users";
 import Link from "next/link";
 import { backgroundItem, activebackground, FavoriteBackgroundProp } from "@/types/background";
+import { IoMdClose } from "react-icons/io";
 
 export default function FavoriteBackground({
   backgroundurl,
-  refreshBackground
+  refreshBackground,
+  setfavoritebackground
 }: FavoriteBackgroundProp) {
   const [favoritebackground, setFavoritebackgrounds] = useState<backgroundItem[]>([]);
   const [userid, setUserid] = useState<number>();
@@ -25,15 +27,15 @@ export default function FavoriteBackground({
 
   const fetchFavoriteBackground = async (uid: number) => {
     try {
-      const res = await fetch(`/api/favoritebackground?backgroundid=${uid}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      const res = await fetch(`/api/favoritebackground?userid=${uid}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
       });
 
       if (res.ok) {
         const data: backgroundItem[] = await res.json();
         setFavoritebackgrounds(data);
       } else {
-        console.error("Failed to fetch favorites", await res.text());
+        console.error("Failed to fetch favorites Backgrounds", await res.text());
       }
     } catch (error) {
       console.error("Error fetching favorite backgrounds", error);
@@ -115,11 +117,16 @@ export default function FavoriteBackground({
   };
 
   return (
-    <div className="fixed top-20 right-4 sm:right-6 z-40 max-w-[90vw] sm:max-w-md md:max-w-lg lg:w-3xl xl:w-4xl lg:max-w-7xl">
-      <div className="bg-black/80 backdrop-blur-md text-white rounded-xl shadow-xl p-4 sm:p-6 space-y-4 border border-white/20">
-        <h2 className="text-lg sm:text-xl font-semibold border-b border-white/20 pb-2">
+    <div className="fixed top-20 right-4 sm:right-50 z-40 max-w-[90vw] sm:max-w-md md:max-w-lg lg:w-3xl xl:w-4xl lg:max-w-7xl ">
+      <div className="bg-black/80 backdrop-blur-md text-white rounded-xl shadow-xl p-4 sm:p-6 space-y-4 border border-white/20 overflow-y-auto custom-scrollbar  max-h-[80vh]">
+      <div className="flex justify-between border-b border-white/20 ">
+        <h2 className="text-lg sm:text-xl font-semibold pb-2">
           Favorite Backgrounds
         </h2>
+        <div className ="cursor-pointer"onClick={()=>setfavoritebackground(false)}>
+          <IoMdClose size={20}/>
+          </div>
+          </div>
 
         {favoritebackground.length === 0 ? (
           <p className="text-sm text-gray-300">No Favorite Background</p>
@@ -171,6 +178,18 @@ export default function FavoriteBackground({
           </div>
         )}
       </div>
+        <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background-color: rgba(255, 255, 255, 0.2);
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+      `}</style>
     </div>
   );
 }

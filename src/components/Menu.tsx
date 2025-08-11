@@ -17,7 +17,7 @@ export default function Menu({ backgroundurl, backgrounddescription, refreshBack
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [successmessage, setsuccessmessage] = useState("");
-  const [favoritebackground, setfavoritebackground] = useState(false);
+  const [favoritebackground, setfavoritebackground] = useState<boolean>(false);
 
   const handlelogout = async () => {
     try {
@@ -145,7 +145,8 @@ export default function Menu({ backgroundurl, backgrounddescription, refreshBack
       )}
 
       {favoritebackground && (
-        <FavoriteBackground backgroundurl={backgroundurl} refreshBackground={refreshBackground} />
+        <FavoriteBackground backgroundurl={backgroundurl} refreshBackground={refreshBackground}
+        setfavoritebackground={setfavoritebackground} />
       )}
     </div>
   );

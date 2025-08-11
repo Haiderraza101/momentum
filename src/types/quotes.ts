@@ -7,3 +7,15 @@ export interface UserFavoriteQuotes{
     quotes:string,
     author:string
 }
+export interface quoteitem{
+    id:number;
+    text:string;
+    author:string;
+    isactive:boolean;
+}
+
+
+export interface activequote{
+    userid:number;
+    quoteid:number;
+}

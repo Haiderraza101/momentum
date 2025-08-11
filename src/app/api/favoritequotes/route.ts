@@ -1,5 +1,6 @@
 import { Quotes } from "@/models/quotes";
-import { UserFavoriteQuotes } from "@/types/quotes";
+import { quoteitem, UserFavoriteQuotes } from "@/types/quotes";
+import { error } from "console";
 import { Trykker } from "next/font/google";
 import { NextResponse } from "next/server";
 
@@ -21,4 +22,25 @@ export async function POST (request:Request):Promise<NextResponse>{
     })
   }
 
+}
+
+export async  function GET(request:Request):Promise<NextResponse>{
+  const {searchParams} = new URL(request.url);
+  const idParam = searchParams.get('userid');
+
+  if (!idParam){
+    return NextResponse.json({
+      error:'User is Required'
+    },{
+      status:400
+    });
+  }
+
+  const id = Number(idParam);
+
+  const result:quoteitem[] = await Quotes.getFavoriteQuote(id);
+
+  return NextResponse.json(result,{
+    status:200
+  })
 }

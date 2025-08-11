@@ -28,7 +28,8 @@ export interface activebackground{
   backgroundid:number;
 }
 
-export interface FavoriteBackgroundProp{
-  backgroundurl:string;
-  refreshBackground:() => void;
+export interface FavoriteBackgroundProp {
+  backgroundurl: string;
+  refreshBackground: () => void;
+  setfavoritebackground: (value: boolean) => void;
 }
