@@ -1,11 +1,15 @@
+"use client";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { JWTPayload } from "@/types/users";
 import Link from "next/link";
-import { backgroundItem, activebackground } from "@/types/background";
+import { backgroundItem, activebackground, FavoriteBackgroundProp } from "@/types/background";
 
-export default function FavoriteBackground({ backgroundurl }: { backgroundurl: string }) {
-  const [favoritebackground, setfavoritebackgrounds] = useState<backgroundItem[]>([]);
+export default function FavoriteBackground({
+  backgroundurl,
+  refreshBackground
+}: FavoriteBackgroundProp) {
+  const [favoritebackground, setFavoritebackgrounds] = useState<backgroundItem[]>([]);
   const [userid, setUserid] = useState<number>();
 
   useEffect(() => {
@@ -14,64 +18,46 @@ export default function FavoriteBackground({ backgroundurl }: { backgroundurl: s
       console.error("No token found");
       return;
     }
-
     const decoded: JWTPayload = jwtDecode(token);
     setUserid(decoded.userid);
-    fetchfavoritebackground(decoded.userid);
+    fetchFavoriteBackground(decoded.userid);
   }, []);
 
-  const fetchfavoritebackground = async (uid: number) => {
+  const fetchFavoriteBackground = async (uid: number) => {
     try {
       const res = await fetch(`/api/favoritebackground?backgroundid=${uid}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
 
       if (res.ok) {
         const data: backgroundItem[] = await res.json();
-        setfavoritebackgrounds(data);
+        setFavoritebackgrounds(data);
       } else {
         console.error("Failed to fetch favorites", await res.text());
       }
     } catch (error) {
-      console.error("Error Fetching Favorite Backgrounds", error);
+      console.error("Error fetching favorite backgrounds", error);
     }
   };
-
-  useEffect(() => {
-    if (!backgroundurl || favoritebackground.length === 0 || !userid) return;
-
-    const matchedBackground = favoritebackground.find(
-      (fav) => fav.imageurl === backgroundurl
-    );
-
-    if (matchedBackground && !matchedBackground.isactive) {
-      markBackgroundAsActive(matchedBackground.id);
-    }
-  }, [backgroundurl, favoritebackground, userid]);
 
   const markBackgroundAsActive = async (backgroundid: number) => {
     if (!userid) return;
 
-    const payload: activebackground = {
-      userid,
-      backgroundid,
-    };
+    const payload: activebackground = { userid, backgroundid };
 
     try {
       const res = await fetch(`/api/setactivebackground`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
       });
 
       if (res.ok) {
-        console.log("Background marked as active");
-        fetchfavoritebackground(userid);
+        await fetchFavoriteBackground(userid);
+        await refreshBackground();
       } else {
         console.error("Failed to set active background", await res.text());
       }
@@ -88,19 +74,43 @@ export default function FavoriteBackground({ backgroundurl }: { backgroundurl: s
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`
         },
-        body: JSON.stringify({ userid, backgroundid }),
+        body: JSON.stringify({ userid, backgroundid })
       });
 
       if (res.ok) {
-        console.log("Background marked as unactive");
-        fetchfavoritebackground(userid);
+        await fetchFavoriteBackground(userid);
+        await refreshBackground();
       } else {
         console.error("Failed to unactive background", await res.text());
       }
     } catch (error) {
       console.error("Error unactivating background", error);
+    }
+  };
+
+  const removeBackground = async (backgroundid: number) => {
+    if (!userid) return;
+
+    try {
+      const res = await fetch(`/api/removefavoritebackground`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ userid, backgroundid })
+      });
+
+      if (res.ok) {
+        await fetchFavoriteBackground(userid);
+        await refreshBackground();
+      } else {
+        console.error("Failed to remove background", await res.text());
+      }
+    } catch (error) {
+      console.error("Error removing background", error);
     }
   };
 
@@ -115,9 +125,9 @@ export default function FavoriteBackground({ backgroundurl }: { backgroundurl: s
           <p className="text-sm text-gray-300">No Favorite Background</p>
         ) : (
           <div className="flex flex-col gap-3">
-            {favoritebackground.map((favorite, index) => (
+            {favoritebackground.map((favorite) => (
               <div
-                key={index}
+                key={favorite.id}
                 className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition"
               >
                 <span className="whitespace-normal break-words text-sm sm:text-base flex-1">
@@ -148,6 +158,13 @@ export default function FavoriteBackground({ backgroundurl }: { backgroundurl: s
                       Set Active
                     </button>
                   )}
+
+                  <button
+                    onClick={() => removeBackground(favorite.id)}
+                    className="px-3 py-1 bg-red-900/50 border border-red-700 text-red-100 rounded-md text-xs sm:text-sm hover:bg-red-800 transition"
+                  >
+                    Remove
+                  </button>
                 </div>
               </div>
             ))}

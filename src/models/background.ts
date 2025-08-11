@@ -130,4 +130,55 @@ public static async setInactiveBackground(body: activebackground) {
   return { success: true, message: "Background set as inactive" };
 }
 
+
+public static async getActiveBackground(userid: number) {
+  const [success, validated] = validate(
+    { userid },
+    { userid: validators.id }
+  );
+
+  if (!success) {
+    const error = validated.issues[0];
+    throw new Error(`Error in validation ${error.message}`);
+  }
+
+  const query = `
+    SELECT b.id, b.imageurl, b.description, b.isactive
+    FROM backgrounds b
+    JOIN favoritebackgrounds fb ON b.id = fb.backgroundid
+    WHERE fb.userid = $1 AND b.isactive = true
+    LIMIT 1
+  `;
+
+  const result = await db.query(query, [userid]);
+
+  if (result.rows.length === 0) {
+    return { success: false, message: "No active background found" };
+  }
+
+  return { success: true, background: result.rows[0] };
+}
+
+
+public static async removeFavoriteBackground(userid: number, backgroundid: number) {
+  const [success, validated] = validate(
+    { userid, backgroundid },
+    { userid: validators.id, backgroundid: validators.id }
+  );
+
+  if (!success) {
+    const error = validated.issues[0];
+    throw new Error(`Validation error: ${error.message}`);
+  }
+
+  const deleteQuery = `
+    DELETE FROM favoritebackgrounds
+    WHERE userid = $1 AND backgroundid = $2
+  `;
+
+  await db.query(deleteQuery, [userid, backgroundid]);
+
+  return { success: true, message: "Background removed from favorites" };
+}
+
 }
