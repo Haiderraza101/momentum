@@ -7,12 +7,15 @@ import { BsThreeDots } from "react-icons/bs";
 import { FaHeart, FaHistory, FaRegCopy } from "react-icons/fa";
 import { JWTPayload } from "@/types/users";
 import { jwtDecode } from "jwt-decode";
+import { IoMdClose } from "react-icons/io";
+
 
 export default function QuotesComponent() {
   const [hovered, setHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [quotes, setQuotes] = useState<Quotes>({ quote: "", author: "" });
   const [successmessage,setsuccessmessage]=useState<string>('');
+  const [copyquote,setcopyquote]=useState<string>('');
 
   useEffect(() => {
     async function getQuote() {
@@ -26,9 +29,9 @@ export default function QuotesComponent() {
   const copyQuote = async () => {
     try {
       await navigator.clipboard.writeText(`"${quotes.quote}" - ${quotes.author}`);
-      alert("Quote copied to clipboard!");
+     setcopyquote('Quote Copied to Clipboard')
     } catch (err) {
-      alert("Failed to copy quote.");
+       setcopyquote('');
     }
   };
 
@@ -90,14 +93,21 @@ export default function QuotesComponent() {
       {hovered && (
         <div className="absolute top-[60%] left-1/2 -translate-x-1/2 mt-2 text-sm text-white flex items-center gap-2">
           <span className="text-white">{quotes.author}</span>
-          <BsThreeDots
-            size={20}
-            className="cursor-pointer"
-            onClick={() => {
+          <div onClick={() => {
               setMenuOpen(!menuOpen);
               setsuccessmessage('');
+              setcopyquote('');
             }}
-          />
+            className="cursor-pointer">
+          {
+            !menuOpen ? (<BsThreeDots
+            size={20}
+          />):(
+         <IoMdClose size={20}/>
+          )
+          }
+          </div>
+          
         </div>
       )}
 
@@ -106,14 +116,16 @@ export default function QuotesComponent() {
           <ul>
             <div
             onClick={copyQuote}>
-            <QuoteMenuItem icon={<FaRegCopy size={18} />} label="Copy quote" />
+            <QuoteMenuItem icon={<FaRegCopy size={18} />} label = {
+              copyquote ? <span className="text-green-500">{copyquote}</span>:"Copy Quote"
+            } />
             </div>
             <div onClick={submitFavoriteQuote}>
             <QuoteMenuItem icon={<FaHeart size={18} className="hover:text-rose-500"/>} label = {
               successmessage ? <span className="text-green-500">{successmessage}</span>:"Mark as favorite"
             } />
             </div>
-            <QuoteMenuItem icon={<FaHistory size={18} />} label="View history" />
+            <QuoteMenuItem icon={<FaHistory size={18} />} label="View favorite history" />
           </ul>
         </div>
       )}

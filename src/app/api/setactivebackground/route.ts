@@ -6,7 +6,6 @@ export async function POST(request:Request):Promise<NextResponse>{
 
   try{
      const body:activebackground= await request.json();
-     console.log('------------Incoming body',body);
      const result = await Background.setActiveBackground(body);
      return NextResponse.json(result,{
       status:200

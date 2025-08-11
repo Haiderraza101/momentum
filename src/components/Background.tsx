@@ -34,11 +34,10 @@ export default function Background() {
           url: data.background.imageurl,
           description: data.background.description
         });
-        return; // ✅ don't fall through to random background
+        return;
       }
     }
 
-    // Only runs if no active background in DB
     const randomBg = await fetchBackgroundfromUnsplash();
     setBackgroundData({
       url: randomBg.url,
