@@ -14,7 +14,7 @@ export class Quotes{
 
     if (!success){
       const error = validated.issues[0];
-      throw new Error(`Error in validation : ${error.message}`);
+      throw new Error(`${error.message}`);
     }
 
     const insertQuoteQuery = `

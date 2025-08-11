@@ -24,7 +24,7 @@ export class User{
 });
   if (!successorfailure) {
     const error = credentialsorerrors.issues[0];
-    throw new Error(`Error in validation: ${error.message}`);
+    throw new Error(`${error.message}`);
   }
 
   const {email,passwordhash,username}=credentialsorerrors;
@@ -76,7 +76,7 @@ return {
   
   if (!successorfailure) {
     const error = credentialsorerrors.issues[0];
-    throw new Error(`Error in validation: ${error.message}`);
+    throw new Error(`${error.message}`);
   }
 
 

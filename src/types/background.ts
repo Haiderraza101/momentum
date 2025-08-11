@@ -16,6 +16,8 @@ userid:number;
 }
 
 export interface backgroundItem{
+  id:number;
   imageurl:string;
   description:string | null;
+  isactive:boolean;
 }

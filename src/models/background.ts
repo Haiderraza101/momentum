@@ -1,4 +1,4 @@
-import { backgroundItem, UserFavoriteBackground } from "@/types/background";
+import { activebackground, backgroundItem, UserFavoriteBackground } from "@/types/background";
 import { validate, validators } from "@/utils/validator";
 import db from '../../lib/db';
 export class Background {
@@ -9,7 +9,7 @@ export class Background {
 
     if (!success) {
       const error = validated.issues[0];
-      throw new Error(`Error in validation: ${error.message}`);
+      throw new Error(`${error.message}`);
     }
 
     const insertBackgroundQuery = `
@@ -46,7 +46,7 @@ public static async getFavoriteBackground(userid: number): Promise<backgroundIte
   }
 
   const query = `
-    SELECT b.imageurl, b.description
+   SELECT b.id, b.imageurl, b.description, b.isactive
     FROM backgrounds b
     JOIN favoritebackgrounds fb ON b.id = fb.backgroundid
     WHERE fb.userid = $1
@@ -54,6 +54,80 @@ public static async getFavoriteBackground(userid: number): Promise<backgroundIte
 
   const result = await db.query(query, [userid]);
   return result.rows; 
+}
+
+public static async setActiveBackground(body: activebackground) {
+  const [success, validated] = validate(
+    {
+      userid: body.userid,
+      backgroundid: body.backgroundid,
+    },
+    {
+      userid: validators.id,
+      backgroundid: validators.id,
+    }
+  );
+
+  if (!success) {
+    const error = validated.issues[0];
+    throw new Error(`Error in validation ${error.message}`);
+  }
+  const deactivateQuery = `
+    UPDATE backgrounds
+    SET isactive = false
+    WHERE id IN (
+      SELECT backgroundid
+      FROM favoritebackgrounds
+      WHERE userid = $1
+    )
+  `;
+  await db.query(deactivateQuery, [body.userid]);
+  const activateQuery = `
+    UPDATE backgrounds
+    SET isactive = true
+    WHERE id = $1
+    AND id IN (
+      SELECT backgroundid
+      FROM favoritebackgrounds
+      WHERE userid = $2
+    )
+  `;
+  await db.query(activateQuery, [body.backgroundid, body.userid]);
+
+  return { success: true, message: "Background set as active" };
+}
+
+public static async setInactiveBackground(body: activebackground) {
+  const [success, validated] = validate(
+    {
+      userid: body.userid,
+      backgroundid: body.backgroundid,
+    },
+    {
+      userid: validators.id,
+      backgroundid: validators.id,
+    }
+  );
+
+  if (!success) {
+    const error = validated.issues[0];
+    throw new Error(`Error in validation ${error.message}`);
+  }
+
+  const deactivateQuery = `
+    UPDATE backgrounds
+    SET isactive = false
+    WHERE id = $1
+    AND id IN (
+      SELECT backgroundid
+      FROM favoritebackgrounds
+      WHERE userid = $2
+    )
+  `;
+
+  await db.query(deactivateQuery, [body.backgroundid, body.userid]);
+
+  return { success: true, message: "Background set as inactive" };
 }
 
 }

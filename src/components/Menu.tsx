@@ -77,6 +77,7 @@ const submitfavoritebackground = async () => {
         onClick={() =>{
           setMenuOpen(!menuOpen);
           setsuccessmessage('');
+          setfavoritebackground(false);
         }}
         className="z-50 py-10 text-white hover:rotate-90 transition duration-300 "
       >
