@@ -8,6 +8,7 @@ export default function Time() {
   const [message, setMessage] = useState<string>("");
   const [goal, setGoal] = useState<string>("");
   const [username, setUsername] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -22,7 +23,6 @@ export default function Time() {
     setUsername(firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase());
   }, []);
 
-  
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -50,22 +50,89 @@ export default function Time() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage("");
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
+
+  const submitQuote = async () => {
+    if (!goal.trim()) {
+      setSuccessMessage("Please enter a quote");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setSuccessMessage("You must be logged in to add a quote");
+      return;
+    }
+
+    try {
+      const decoded: JWTPayloadwithUserName = jwtDecode(token);
+      const userid = decoded.userid;
+
+      const res = await fetch("/api/customquotes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          userid,
+          quotes: goal,
+          author: username || "Anonymous"
+        }),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        setSuccessMessage(`Failed to add quote: ${errorText}`);
+        return;
+      }
+
+      setSuccessMessage("Your quote has been added to the favorites");
+      setGoal("");
+    } catch (error) {
+      setSuccessMessage("Error submitting quote");
+      console.error("Submit Quote Error:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center text-white text-center px-4">
       <div className="text-5xl sm:text-6xl md:text-8xl font-bold">{currenttime}</div>
       <div className="text-2xl sm:text-3xl md:text-4xl font-medium mt-2">{message}</div>
 
       <div className="text-xl sm:text-2xl md:text-3xl font-light mt-6">
-        {username && `${username}, What is your main goal for today?`}
+        {username && `${username}, What is your quote for today?`}
       </div>
 
-      <input
-        type="text"
-        value={goal}
-        onChange={(e) => setGoal(e.target.value)}
-        placeholder="Enter your goal..."
-        className="mt-4 w-full max-w-xl text-lg sm:text-xl border-b-2 border-white bg-transparent text-white font-bold text-center focus:outline-none placeholder-white/60 truncate overflow-hidden whitespace-nowrap"
-      />
+      <div>
+        <input
+          type="text"
+          value={goal}
+          onChange={(e) => setGoal(e.target.value)}
+          placeholder="Enter your Quote..."
+          className="mt-4 w-full max-w-xl text-lg sm:text-xl border-b-2 border-white bg-transparent text-white font-bold text-center focus:outline-none placeholder-white/60 truncate overflow-hidden whitespace-nowrap"
+        />
+
+        <button
+          onClick={submitQuote}
+          className="mt-4 px-6 py-2 bg-white/15 rounded-md hover:bg-white/20 transition text-white font-semibold w-full cursor-pointer"
+        >
+          Submit Quote
+        </button>
+      </div>
+
+      {successMessage && (
+        <div className="mt-4 text-green-400 font-semibold">
+          {successMessage}
+        </div>
+      )}
     </div>
   );
 }

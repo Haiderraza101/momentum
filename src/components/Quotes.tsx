@@ -2,7 +2,7 @@
 
 import { useState, useEffect,useCallback } from "react";
 import { fetchQuotes } from '../lib/api/quotes';
-import { quotedata, quoteitem, Quotes } from "@/types/quotes";
+import { quotedata } from "@/types/quotes";
 import { BsThreeDots } from "react-icons/bs";
 import { FaHeart, FaHistory, FaRegCopy } from "react-icons/fa";
 import { JWTPayload } from "@/types/users";
@@ -56,6 +56,8 @@ export default function QuotesComponent() {
         }
       }
 
+  
+
       const randomquote = await fetchQuotes();
       setquotedata({
         quote:randomquote.quote,
@@ -67,6 +69,9 @@ export default function QuotesComponent() {
      }
   },[]);
 
+      useEffect(() => {
+  loadQuotes();
+}, [loadQuotes]);
 
   const copyQuote = async () => {
     try {

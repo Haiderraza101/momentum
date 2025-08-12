@@ -120,4 +120,89 @@ return {
     success:true,message:'Quote set as active '
    }
   }
+
+  public static async setInactiveQuote(body:activequote){
+   const [success,validated]=validate({
+    userid:body.userid,
+    quoteid:body.quoteid
+   },{
+    userid:validators.id,
+    quoteid:validators.id
+   });
+
+   if (!success){
+    const error = validated.issues[0];
+    throw new Error (`${error.message}`);
+   }
+
+   const deactivateQuery = `Update quotes 
+   set isactive = false 
+   where id = $1
+   and id in (select quoteid from favoritequotes where userid = $2)`;
+
+   await db.query(deactivateQuery,[body.quoteid,body.userid]);
+
+   return {
+    success:true,
+    message:'Quote set as inactive'
+   }
+
+  }
+
+
+  public static async removeFavoriteQuote(userid:number,quoteid:number){
+    const [success,validated]=validate({
+      userid,quoteid
+    },{
+      userid:validators.id,
+      quoteid:validators.id
+    });
+
+    if (!success){
+      const error = validated.issues[0];
+      throw new Error(`${error.message}`);
+    }
+
+    const deleteQuery = `Delete from favoritequotes 
+    where userid = $1 and quoteid = $2`;
+
+    await db.query(deleteQuery,[userid,quoteid]);
+
+    return {
+      success:true,
+      message:"Quote removed from Favorites"
+    }
+
+  }
+
+public static async CustomQuotes(FavoriteQuote: UserFavoriteQuotes) {
+  const { userid, quotes, author } = FavoriteQuote;
+
+  const insertQuoteQuery = `
+    INSERT INTO quotes (text, author)
+    VALUES ($1, $2)
+    ON CONFLICT (text, author)
+    DO UPDATE SET text = EXCLUDED.text,
+                  author = EXCLUDED.author
+    RETURNING id
+  `;
+
+  const queryresult = await db.query(insertQuoteQuery, [quotes, author]);
+  const quoteid = queryresult.rows[0].id;
+
+  const insertFavoriteQuoteQuery = `
+    INSERT INTO favoritequotes(userid, quoteid)
+    VALUES ($1, $2)
+    ON CONFLICT (userid, quoteid) DO NOTHING
+  `;
+
+  await db.query(insertFavoriteQuoteQuery, [userid, quoteid]);
+
+  return {
+    success: true,
+  };
+}
+
+
+  
 }

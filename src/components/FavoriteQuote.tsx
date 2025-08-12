@@ -71,8 +71,60 @@ export default function FavoriteQuote({setfavoritequote,refreshQuote}:any) {
     }
 
   };
-  const unactiveQuote = async (quoteid: number) => {};
-  const removeQuote = async (quoteid: number) => {};
+  const unactiveQuote = async (quoteid: number) => {
+ 
+    if (!userid){
+      return;
+    }
+    try{
+      const res = await fetch(`/api/setunactivequotes`,{
+        method:"PUT",
+        headers:{
+          "Content-Type":"application/json",
+          'Authorization':`Bearer ${localStorage.getItem('token')}`
+        },
+        body:JSON.stringify({userid,quoteid})
+      });
+      if (res.ok){
+        await fetchfavoritequote(userid);
+        await refreshQuote();
+      }
+      else{
+        console.error('Failed to unactive Quote ',await res.text());
+      }
+    }
+    catch(error){
+        console.error('Error unactivating Quote',error);
+    }
+
+
+  };
+  const removeQuote = async (quoteid: number) => {
+    if (!userid){
+      return;
+    }
+    try{
+      const res = await fetch (`/api/removefavoritequotes`,{
+        method:'DELETE',
+        headers:{
+          'Content-Type':"application/json",
+          'Authorization':`Bearer ${localStorage.getItem('token')}`
+        },
+        body:JSON.stringify({userid,quoteid})
+      });
+
+      if (res.ok){
+        await fetchfavoritequote(userid);
+        await refreshQuote();
+      }
+      else{
+        console.error('Failed to remove Quotes ',await res.text());
+      }
+    }
+    catch(error){
+      console.error('Error removing Quote ',error);
+    }
+  };
 
   return (
     <div className="fixed top-20 right-4 sm:right-50 z-40 max-w-[95vw] sm:max-w-md md:max-w-lg lg:max-w-3xl xl:max-w-4xl">

@@ -14,7 +14,10 @@ export interface quoteitem{
     isactive:boolean;
 }
 
-
+export interface quotedata{
+    quote:string;
+    author:string;
+}
 export interface activequote{
     userid:number;
     quoteid:number;

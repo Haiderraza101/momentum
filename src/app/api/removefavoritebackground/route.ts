@@ -15,11 +15,13 @@ export async function DELETE(req: Request) {
 
     const result = await Background.removeFavoriteBackground(userid, backgroundid);
 
-    return NextResponse.json(result);
+    return NextResponse.json(result,{
+      status:200
+    });
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message || "Internal Server Error" },
-      { status: 500 }
+      { status: 400 }
     );
   }
 }

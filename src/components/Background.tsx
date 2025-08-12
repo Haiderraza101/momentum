@@ -25,7 +25,7 @@ export default function Background() {
 
     if (userid) {
       const res = await fetch(`/api/getactivebackground?userid=${userid}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
 
@@ -83,7 +83,7 @@ export default function Background() {
           <Weather />
         </div>
       </div>
-      <div className="relative top-50 text-center">
+      <div className="relative top-20 text-center">
         <Time />
         <QuotesComponent />
       </div>

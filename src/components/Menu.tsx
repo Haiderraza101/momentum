@@ -135,8 +135,6 @@ export default function Menu({ backgroundurl, backgrounddescription, refreshBack
               <MenuItem icon={<FiDownload size={18} />} label="Download background" />
             </div>
 
-            <MenuItem icon={<FaListCheck size={20} />} label="View Goals" />
-
             <div onClick={handlelogout}>
               <MenuItem icon={<CiLogout size={20} />} label="Logout" />
             </div>
