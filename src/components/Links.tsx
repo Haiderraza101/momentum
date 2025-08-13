@@ -3,11 +3,12 @@ import { useState, useEffect } from "react";
 import { motion } from 'framer-motion';
 import { FiExternalLink } from "react-icons/fi";
 import { IoIosAdd } from "react-icons/io";
-import { BsThreeDots } from "react-icons/bs";
 import { GrFormPreviousLink } from "react-icons/gr";
 import { CiGlobe } from "react-icons/ci";
 import Link from "next/link";
 import { IoMdClose } from "react-icons/io";
+import { JWTPayload } from "@/types/users";
+import { jwtDecode } from "jwt-decode";
 
 export default function Links() {
   const [openlinks, setopenlinks] = useState(false);
@@ -15,10 +16,36 @@ export default function Links() {
   const [link, setlink] = useState("");
   const [title, settitle] = useState("");
   const [linksList, setLinksList] = useState<{ id: number; title: string; url: string }[]>([]);
+  const [token, setToken] = useState<string | null>(null);
+  const [userid, setUserid] = useState<number | null>(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+      try {
+        const decoded: JWTPayload = jwtDecode(storedToken);
+        setUserid(decoded.userid);
+      } catch (err) {
+        console.error("Invalid token", err);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token && userid) {
+      fetchLinks();
+    }
+  }, [token, userid]);
 
   const fetchLinks = async () => {
+    if (!token || !userid) return;
     try {
-      const res = await fetch("/api/getlinks");
+      const res = await fetch(`/api/getlinks?userid=${userid}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       setLinksList(data);
     } catch (err) {
@@ -26,32 +53,31 @@ export default function Links() {
     }
   };
 
-  useEffect(() => {
-    if (openlinks) {
-      fetchLinks();
-    }
-  }, [openlinks]);
-
   const submitlinks = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!token || !userid) {
+      console.error("No token or userid found — cannot submit link");
+      return;
+    }
     try {
       const res = await fetch(`/api/submitlinks`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, link })
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ title, url: link, userid })
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         console.error('Error submitting the Links:', data);
       } else {
-        console.log('Link submitted successfully:', data);
         settitle("");
         setlink("");
         setopeninput(false);
         setopenlinks(true);
-        fetchLinks(); 
+        fetchLinks();
       }
     } catch (error) {
       console.error('Error in sending request', error);
@@ -61,7 +87,6 @@ export default function Links() {
   return (
     <div>
       <div className="flex flex-col gap-1 p-7 justify-center cursor-pointer"> 
-      
         <div className="hover:bg-transparent w-4 ml-1 ">
           <FiExternalLink
             size={20}
@@ -81,7 +106,6 @@ export default function Links() {
             transition={{ duration: 0.3 }}
           >
             <div className="flex flex-col gap-4 bg-black p-5 opacity-80 rounded-xl w-80 absolute z-50 pointer-events-auto">
-              
               <div className="flex justify-between items-center">
                 <div className="flex gap-2">
                   <FiExternalLink size={20} />
@@ -95,34 +119,34 @@ export default function Links() {
                       setopeninput(true);
                     }}
                   />
-                <IoMdClose size={18}
-                className="mt-1"
-                onClick={()=>{
-                  setopenlinks(false);
-                }}/>
+                  <IoMdClose size={18}
+                    className="mt-1"
+                    onClick={() => {
+                      setopenlinks(false);
+                    }}
+                  />
                 </div>
               </div>
-<div className="flex flex-col gap-2">
-  {linksList.length > 0 ? (
-    linksList.map((item) => (
-      <Link
-        key={item.id}
-        href={item.url}
-        target="_blank"
-        className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/60 
-                   hover:bg-gray-700/80 hover:scale-[1.02] transition-all duration-200 
-                   text-white shadow-sm hover:shadow-md"
-      >
-    
-        <FiExternalLink size={18} className="text-gray-400" />
-        
-        <span className="truncate">{item.title}</span>
-      </Link>
-    ))
-  ) : (
-    <p className="text-gray-400 text-sm">No links yet</p>
-  )}
-</div>
+
+              <div className="flex flex-col gap-2">
+                {linksList.length > 0 ? (
+                  linksList.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={item.url}
+                      target="_blank"
+                      className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/60 
+                                 hover:bg-gray-700/80 hover:scale-[1.02] transition-all duration-200 
+                                 text-white shadow-sm hover:shadow-md"
+                    >
+                      <FiExternalLink size={18} className="text-gray-400" />
+                      <span className="truncate">{item.title}</span>
+                    </Link>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-sm">No links yet</p>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
@@ -145,10 +169,11 @@ export default function Links() {
                 />
                 <div>Creating a Link</div>
                 <IoMdClose size={20} 
-                onClick={()=>{
-                  setopeninput(false);
-                  setopenlinks(false);
-                }}/>
+                  onClick={() => {
+                    setopeninput(false);
+                    setopenlinks(false);
+                  }}
+                />
               </div>
 
               <form onSubmit={submitlinks}>
@@ -159,7 +184,7 @@ export default function Links() {
                   onChange={(e) => settitle(e.target.value)}
                   required
                 />
-                <div className="pt-4 text-sm">LINKS</div>
+                <div className="pt-4 text-sm">LINK</div>
                 <div className="flex">
                   <CiGlobe className="mr-2 mt-3" size={20} />
                   <input
@@ -174,8 +199,7 @@ export default function Links() {
                 <div className="text-center">
                   <button 
                     type="submit" 
-                    className="p-1 border w-full rounded-full mt-8 bg-teal-700
-                    cursor-pointer"
+                    className="p-1 border w-full rounded-full mt-8 bg-teal-700 cursor-pointer"
                   >
                     Add
                   </button>
