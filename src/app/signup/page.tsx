@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import {  UserSignUpFormData } from "@/types/users";
 import Link from "next/link";
+import momentumlogo from '../../images/momentumlogo.png';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -87,7 +88,7 @@ export default function SignUpPage() {
       <div className="relative z-10 w-full max-w-sm bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-700">
         <div className="flex flex-col items-center mb-5">
           <Image
-            src="/momentumlogo.png"
+            src={momentumlogo}
             alt="Momentum Logo"
             width={150}
             height={60}

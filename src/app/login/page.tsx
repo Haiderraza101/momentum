@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getaccountdetails } from "@/middleware/userauth";
 import Image from "next/image";
+import momentumlogo from '../../images/momentumlogo.png';
 
 
 export default function LoginPage() {
@@ -97,7 +98,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md bg-gray-900 p-8 rounded-2xl shadow-lg border border-gray-700">
           <div className="flex flex-col items-center mb-6">
             <Image
-              src="/momentumlogo.png"
+              src={momentumlogo}
               alt="Momentum Logo"
               width={200}
               height={80}
