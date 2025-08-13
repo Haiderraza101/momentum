@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect,useCallback } from "react";
-import { fetchQuotes } from '../lib/api/quotes';
+import { useState } from "react";
 import { quotedata } from "@/types/quotes";
 import { BsThreeDots } from "react-icons/bs";
 import { FaHeart, FaHistory, FaRegCopy } from "react-icons/fa";
