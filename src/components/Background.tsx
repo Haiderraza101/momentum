@@ -9,7 +9,7 @@ import Menu from './Menu';
 import { jwtDecode } from "jwt-decode";
 import { JWTPayload } from "@/types/users";
 import { quotedata } from "@/types/quotes";
-import fetchQuotes from "@/lib/api/quotes";
+import fetchQuotes from "@/lib/api/Quotes";
 
 export default function Background() {
   const [backgroundData, setBackgroundData] = useState<{ url: string; description: string } | null>(null);
