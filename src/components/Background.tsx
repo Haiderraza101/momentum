@@ -8,10 +8,13 @@ import QuotesComponent from './Quotes';
 import Menu from './Menu';
 import { jwtDecode } from "jwt-decode";
 import { JWTPayload } from "@/types/users";
+import { quotedata } from "@/types/quotes";
+import { fetchQuotes } from "@/lib/api/quotes";
 
 export default function Background() {
   const [backgroundData, setBackgroundData] = useState<{ url: string; description: string } | null>(null);
   const [loading, setLoading] = useState(true);
+   const [quotedata,setquotedata]=useState<quotedata|null>(null);
 
   const loadBackground = useCallback(async () => {
   try {
@@ -54,6 +57,51 @@ export default function Background() {
     loadBackground();
   }, [loadBackground]);
 
+
+    const loadQuotes = useCallback(async () =>{
+     try{
+      let userid :number|null = null;
+      const token = localStorage.getItem('token');
+
+      if (token){
+        const decoded :JWTPayload = jwtDecode(token);
+        userid=decoded.userid;
+      }
+
+      if (userid){
+        const res = await fetch(`/api/getactivequotes?userid=${userid}`,{
+          headers:{
+            'Authorization':`Bearer ${token}`
+          }
+        });
+        const data = await res.json();
+
+        if (data.success&&data.quote){
+          setquotedata({
+            quote:data.quote.text,
+            author:data.quote.author
+          });
+          return;
+        }
+      }
+
+  
+
+      const randomquote = await fetchQuotes();
+      setquotedata({
+        quote:randomquote.quote,
+        author:randomquote.author
+      });
+     }
+     catch(error){
+      console.error('Error loading Quote',error);
+     }
+  },[]);
+
+      useEffect(() => {
+  loadQuotes();
+}, [loadQuotes]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
@@ -84,8 +132,9 @@ export default function Background() {
         </div>
       </div>
       <div className="relative top-20 text-center">
-        <Time />
-        <QuotesComponent />
+        <Time loadQuotes={loadQuotes}/>
+        <QuotesComponent quotedata={quotedata}
+        loadQuotes={loadQuotes}/>
       </div>
     </div>
   );

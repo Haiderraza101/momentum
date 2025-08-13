@@ -1,6 +1,5 @@
 import { User } from "@/models/users";
 import { UserLogin } from "@/types/users";
-import { response } from "@/utils/response";
 import { NextResponse } from "next/server";
 import { serialize } from "cookie";
 

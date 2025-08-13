@@ -3,12 +3,13 @@ import React, { useState, useEffect } from "react";
 import { JWTPayloadwithUserName } from "@/types/users";
 import { jwtDecode } from "jwt-decode";
 
-export default function Time() {
+export default function Time({loadQuotes}:any) {
   const [currenttime, setCurrentTime] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [goal, setGoal] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [openquotebutton,setopenquotebutton]=useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -94,7 +95,10 @@ export default function Time() {
         return;
       }
 
-      setSuccessMessage("Your quote has been added to the favorites");
+      await loadQuotes();
+
+
+      setSuccessMessage("Your quote has been added");
       setGoal("");
     } catch (error) {
       setSuccessMessage("Error submitting quote");
@@ -112,20 +116,28 @@ export default function Time() {
       </div>
 
       <div>
-        <input
-          type="text"
-          value={goal}
-          onChange={(e) => setGoal(e.target.value)}
-          placeholder="Enter your Quote..."
-          className="mt-4 w-full max-w-xl text-lg sm:text-xl border-b-2 border-white bg-transparent text-white font-bold text-center focus:outline-none placeholder-white/60 truncate overflow-hidden whitespace-nowrap"
-        />
-
-        <button
+<input
+  type="text"
+  value={goal}
+  onChange={(e) => {
+    const value = e.target.value;
+    setGoal(value);
+    setopenquotebutton(value.trim() !== "");
+  }}
+  placeholder="Enter your Quote..."
+  className="mt-4 w-full max-w-xl text-lg sm:text-xl border-b-2 border-white bg-transparent text-white font-bold text-center focus:outline-none placeholder-white/60 truncate overflow-hidden whitespace-nowrap z-50 "
+/>
+{
+  openquotebutton && (
+     <button
           onClick={submitQuote}
-          className="mt-4 px-6 py-2 bg-white/15 rounded-md hover:bg-white/20 transition text-white font-semibold w-full cursor-pointer"
+          className="mt-4 px-6 py-2 bg-white/15 rounded-md hover:bg-white/20 transition text-white font-semibold cursor-pointer"
         >
-          Submit Quote
+          Add Quote
         </button>
+  )
+}
+       
       </div>
 
       {successMessage && (

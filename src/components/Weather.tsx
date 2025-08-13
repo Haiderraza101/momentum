@@ -8,6 +8,7 @@ import { Weather } from "@/types/weather";
 import { BsThreeDots } from "react-icons/bs";
 import { MdOutlineArrowOutward } from "react-icons/md";
 import Link from 'next/link';
+import { IoMdClose } from "react-icons/io";
 
 export default function WeatherComponent(){
   const [opentemperature,setopentemperature]=useState<boolean>(false);
@@ -62,9 +63,12 @@ export default function WeatherComponent(){
            <h2>Islamabad Weather</h2>
          </div>
          <div >
-           <BsThreeDots
-             size={25}
-           
+           <IoMdClose
+             size={20}
+             className='cursor-pointer'
+           onClick={()=>{
+            setopentemperature(false)
+           }}
            />
          
          </div>

@@ -11,67 +11,15 @@ import { IoMdClose } from "react-icons/io";
 import FavoriteQuote from "./FavoriteQuote";
 
 
-export default function QuotesComponent() {
+export default function QuotesComponent({quotedata,loadQuotes}:any) {
   const [hovered, setHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [successmessage,setsuccessmessage]=useState<string>('');
   const [copyquote,setcopyquote]=useState<string>('');
   const [favoritequote,setfavoritequote]=useState<boolean>(false);
-  const [quotedata,setquotedata]=useState<quotedata|null>(null);
+ 
 
-  // useEffect(() => {
-  //   async function getQuote() {
-  //     const data = await fetchQuotes();
-  //     console.log("Fetched Quote:", data);
-  //     setQuotes(data);
-  //   }
-  //   getQuote();
-  // }, []);
-
-  const loadQuotes = useCallback(async () =>{
-     try{
-      let userid :number|null = null;
-      const token = localStorage.getItem('token');
-
-      if (token){
-        const decoded :JWTPayload = jwtDecode(token);
-        userid=decoded.userid;
-      }
-
-      if (userid){
-        const res = await fetch(`/api/getactivequotes?userid=${userid}`,{
-          headers:{
-            'Authorization':`Bearer ${token}`
-          }
-        });
-        const data = await res.json();
-
-        if (data.success&&data.quote){
-          setquotedata({
-            quote:data.quote.text,
-            author:data.quote.author
-          });
-          return;
-        }
-      }
-
-  
-
-      const randomquote = await fetchQuotes();
-      setquotedata({
-        quote:randomquote.quote,
-        author:randomquote.author
-      });
-     }
-     catch(error){
-      console.error('Error loading Quote',error);
-     }
-  },[]);
-
-      useEffect(() => {
-  loadQuotes();
-}, [loadQuotes]);
 
   const copyQuote = async () => {
     try {

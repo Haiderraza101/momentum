@@ -1,7 +1,5 @@
 import { Quotes } from "@/models/quotes";
 import { quoteitem, UserFavoriteQuotes } from "@/types/quotes";
-import { error } from "console";
-import { Trykker } from "next/font/google";
 import { NextResponse } from "next/server";
 
 export async function POST (request:Request):Promise<NextResponse>{

@@ -3,7 +3,7 @@ import Background from "@/components/Background";
 export default function HomePage(){
   return (
     <div>
-      <Background></Background>
+      <Background />
       </div>
   )
 }

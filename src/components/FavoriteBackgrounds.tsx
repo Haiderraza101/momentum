@@ -43,7 +43,8 @@ export default function FavoriteBackground({
   };
 
   const markBackgroundAsActive = async (backgroundid: number) => {
-    if (!userid) return;
+    if (!userid)
+       return;
 
     const payload: activebackground = { userid, backgroundid };
 
@@ -52,7 +53,7 @@ export default function FavoriteBackground({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify(payload)
       });
@@ -119,7 +120,7 @@ export default function FavoriteBackground({
   return (
     <div className="fixed top-20 right-4 sm:right-50 z-40 max-w-[90vw] sm:max-w-md md:max-w-lg lg:w-3xl xl:w-4xl lg:max-w-7xl ">
       <div className="bg-black/80 backdrop-blur-md text-white rounded-xl shadow-xl p-4 sm:p-6 space-y-4 border border-white/20 overflow-y-auto custom-scrollbar  max-h-[80vh]">
-      <div className="flex justify-between border-b border-white/20 ">
+     <div className="flex justify-between border-b border-white/20 sticky top-0 bg-black/80 backdrop-blur-md z-50 pt-2">
         <h2 className="text-lg sm:text-xl font-semibold pb-2">
           Favorite Backgrounds
         </h2>

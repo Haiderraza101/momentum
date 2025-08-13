@@ -174,35 +174,47 @@ return {
     }
 
   }
-
 public static async CustomQuotes(FavoriteQuote: UserFavoriteQuotes) {
   const { userid, quotes, author } = FavoriteQuote;
 
+  
+  await db.query(`
+    UPDATE quotes
+    SET isactive = false
+    WHERE id IN (
+      SELECT quoteid FROM favoritequotes WHERE userid = $1
+    )
+  `, [userid]);
+
+
   const insertQuoteQuery = `
-    INSERT INTO quotes (text, author)
-    VALUES ($1, $2)
+    INSERT INTO quotes (text, author, isactive)
+    VALUES ($1, $2, true)
     ON CONFLICT (text, author)
-    DO UPDATE SET text = EXCLUDED.text,
-                  author = EXCLUDED.author
+    DO UPDATE 
+      SET text = EXCLUDED.text,
+          author = EXCLUDED.author,
+          isactive = true
     RETURNING id
   `;
-
   const queryresult = await db.query(insertQuoteQuery, [quotes, author]);
   const quoteid = queryresult.rows[0].id;
 
-  const insertFavoriteQuoteQuery = `
-    INSERT INTO favoritequotes(userid, quoteid)
-    VALUES ($1, $2)
-    ON CONFLICT (userid, quoteid) DO NOTHING
-  `;
+  await db.query(`
+    INSERT INTO favoritequotes(userid, quoteid, isactive)
+    VALUES ($1, $2, true)
+    ON CONFLICT (userid, quoteid) 
+    DO UPDATE SET isactive = true
+  `, [userid, quoteid]);
 
-  await db.query(insertFavoriteQuoteQuery, [userid, quoteid]);
+ 
+  await db.query(`
+    UPDATE users
+    SET activequoteid = $1
+    WHERE id = $2
+  `, [quoteid, userid]);
 
-  return {
-    success: true,
-  };
+  return { success: true, quoteid };
 }
-
-
   
 }
