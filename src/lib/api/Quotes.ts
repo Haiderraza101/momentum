@@ -1,5 +1,5 @@
 import { Quotes } from "@/types/quotes";
-export async function fetchQuotes(): Promise<Quotes> {
+export default async function fetchQuotes(): Promise<Quotes> {
   const res = await fetch('/api/quotes');
 
   if (!res.ok) {
