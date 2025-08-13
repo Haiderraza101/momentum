@@ -12,7 +12,6 @@ export default function Home() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // localStorage.removeItem('token');
         const account = await getaccountdetails();
         if (!account) {
           router.push("/login");

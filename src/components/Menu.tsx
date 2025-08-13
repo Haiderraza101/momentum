@@ -10,7 +10,6 @@ import { MenuProp } from "@/types/background";
 import { jwtDecode } from "jwt-decode";
 import { JWTPayload } from "@/types/users";
 import FavoriteBackground from "./FavoriteBackgrounds";
-import { FaListCheck } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 
 export default function Menu({ backgroundurl, backgrounddescription, refreshBackground }: MenuProp) {

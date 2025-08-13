@@ -5,7 +5,7 @@ import { success } from "zod";
 
 
 
-export async function GET(request:Request){
+export async function GET(request:Request):Promise<NextResponse>{
 
   try{
     const {searchParams} = new URL(request.url);
